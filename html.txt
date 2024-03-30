@@ -1,0 +1,66 @@
+// backend/main.go
+package main
+
+import (
+    "database/sql"
+    "encoding/json"
+    "log"
+    "net/http"
+
+    _ "github.com/go-sql-driver/mysql"
+)
+
+var db *sql.DB
+
+func main() {
+    // Initialize database connection
+    initDB()
+
+    http.HandleFunc("/api/featured-destinations", getFeaturedDestinations)
+    http.HandleFunc("/api/search-destinations", searchDestinations)
+    log.Fatal(http.ListenAndServe(":8080", nil))
+}
+
+func initDB() {
+    var err error
+    db, err = sql.Open("mysql", "username:password@tcp(127.0.0.1:3306)/dbname")
+    if err != nil {
+        log.Fatal(err)
+    }
+    err = db.Ping()
+    if err != nil {
+        log.Fatal(err)
+    }
+}
+
+func getFeaturedDestinations(w http.ResponseWriter, r *http.Request) {
+    // Dummy implementation, fetch data from MySQL database
+    destinations := fetchFeaturedDestinationsFromDB()
+    // Convert destinations to JSON
+    json.NewEncoder(w).Encode(destinations)
+}
+
+func searchDestinations(w http.ResponseWriter, r *http.Request) {
+    // Extract search query from request
+    query := r.URL.Query().Get("query")
+    // Perform search in the database
+    results := searchDestinationsInDB(query)
+    // Convert results to JSON
+    json.NewEncoder(w).Encode(results)
+}
+
+func fetchFeaturedDestinationsFromDB() []Destination {
+    // Dummy implementation, fetch data from MySQL database
+    return []Destination{}
+}
+
+func searchDestinationsInDB(query string) []Destination {
+    // Dummy implementation, perform search in MySQL database
+    return []Destination{}
+}
+
+type Destination struct {
+    Name        string `json:"name"`
+    Description string `json:"description"`
+    // Add more fields as needed
+}

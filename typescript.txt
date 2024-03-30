@@ -1,0 +1,34 @@
+// frontend/src/app/app.component.ts
+import { Component } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+  featuredDestinations: any[];
+  searchQuery: string;
+  apiUrl: string = 'http://localhost:8080/api';
+
+  constructor(private http: HttpClient) {}
+
+  ngOnInit() {
+    this.getFeaturedDestinations();
+  }
+
+  getFeaturedDestinations() {
+    this.http.get<any[]>(`${this.apiUrl}/featured-destinations`).subscribe(destinations => {
+      this.featuredDestinations = destinations;
+    });
+  }
+
+  searchDestinations() {
+    if (this.searchQuery) {
+      this.http.get<any[]>(`${this.apiUrl}/search-destinations?query=${this.searchQuery}`).subscribe(results => {
+        // Handle search results
+      });
+    }
+  }
+}
